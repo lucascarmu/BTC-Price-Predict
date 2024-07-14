@@ -3,10 +3,15 @@ name: Update Data, Preprocess, and Train Model
 on:
   schedule:
     - cron: '0 0 * * *' # Run daily at midnight UTC
-
+  push:
+    branches: [ main ]
+    
 jobs:
   update_preprocess_train:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repository
