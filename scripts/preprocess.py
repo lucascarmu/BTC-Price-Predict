@@ -1,3 +1,4 @@
+import shutil
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -43,8 +44,17 @@ test_dataset = tf.data.Dataset.zip((test_features_dataset, test_labels_dataset))
 train_dataset = train_dataset.batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 test_dataset = test_dataset.batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
-####################################################
+
+# Define file paths
+train_dataset_file = './data/train_dataset/'
+test_dataset_file = './data/test_dataset/'
+
+# Remove old files if they exist
+if os.path.exists(train_dataset_file):
+    shutil.rmtree(train_dataset_file)
+if os.path.exists(test_dataset_file):
+    shutil.rmtree(test_dataset_file)
+
 # Save the datasets
-tf.data.Dataset.save(train_dataset, './data/train_dataset')
-tf.data.Dataset.save(test_dataset, './data/test_dataset')
-####################################################
+tf.data.Dataset.save(train_dataset, train_dataset_file)
+tf.data.Dataset.save(test_dataset, test_dataset_file)
