@@ -54,7 +54,7 @@ for i in range(num_iter):
                                                                   verbose=1)])
 
         # Save the fitted model
-        model_save_path = os.path.join(save_dir, f'ensemble_model_{i}_{loss_function}.h5')
+        model_save_path = os.path.join(save_dir, f'ensemble_model_{i}_{loss_function}.keras')
         model.save(model_save_path)
         
         # Append fitted model to list of ensemble models

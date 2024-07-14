@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import numpy as np
-
+import tensorflow as tf
 
 
 
@@ -182,3 +182,11 @@ def make_train_test_splits(windows, labels, test_split=0.2):
     test_windows = windows[split_size:]
     test_labels = labels[split_size:]
     return train_windows, test_windows, train_labels, test_labels
+
+def make_ensemble_preds(ensemble_models, data):
+        ensemble_preds = []
+        for model in ensemble_models:
+            preds = model.predict(data)
+            ensemble_preds.append(preds)
+        return tf.constant(tf.squeeze(ensemble_preds))
+    
