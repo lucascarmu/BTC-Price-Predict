@@ -48,7 +48,7 @@ for i in range(num_iter):
                       metrics=["mae", "mse"])
         
         # Fit model
-        model.fit(train_dataset,
+        model.fit(train_dataset.repeat(),
                   epochs=num_epochs,
                   steps_per_epoch=steps_per_epoch,
                   verbose=0,
