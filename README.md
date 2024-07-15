@@ -25,7 +25,8 @@ The goal of this project is to build a model that can predict Bitcoin prices bas
    ```
 3. Create and activate a virtual environment:
    ```bash
-   pip install -r requirements.txt
+   conda create -n btc-prediction python=3.10.14
+   conda activate btc-prediction
    ```
 5. Install the required packages:
    ```bash
