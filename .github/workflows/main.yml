@@ -31,9 +31,9 @@ jobs:
 #      run: |
 #        python scripts/download_data.py
 
-#    - name: Preprocess data
-#      run: |
-#        python scripts/preprocess.py
+    - name: Preprocess data
+      run: |
+        python scripts/preprocess.py
 
     - name: Train model
       run: |
@@ -41,7 +41,7 @@ jobs:
 
     - name: Evaluate model
       run: |
-        python scripts/avaluate.py
+        python scripts/evaluate.py
 
     - name: Commit and Push changes
       uses: stefanzweifel/git-auto-commit-action@v5
