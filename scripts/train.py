@@ -58,7 +58,10 @@ for i in range(num_iter):
                   verbose=0,
                   callbacks=[tf.keras.callbacks.EarlyStopping(monitor="val_loss",
                                                               patience=200,
-                                                              restore_best_weights=True)])
+                                                              restore_best_weights=True),
+                             tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss",
+                                                                  patience=100,
+                                                                  verbose=1)])
 
         # Save the fitted model
         model_save_path = os.path.join(save_dir, f'ensemble_model_{i}_{loss_function}.keras')
