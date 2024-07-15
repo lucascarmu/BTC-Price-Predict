@@ -16,7 +16,7 @@ HORIZON = config.HORIZON
 WINDOW_SIZE = config.WINDOW_SIZE
 
 
-def predict(days, estimation):
+def predict(days, confidence_level):
     
     test_dataset = tf.data.Dataset.load('./data/test_dataset')
     save_dir = './models/ensemble/' # Directory where the models are saved
@@ -42,7 +42,7 @@ def predict(days, estimation):
     
     last_days = np.append(last_X_test, last_y_test)
     
-    print(f"Calculating predictions for the next {days} days with estimation value: {estimation}...")
+    print(f"Calculating predictions for the next {days} days with confidence level: {confidence_level}...")
     for day in range(days):
         ensemble_preds = make_ensemble_preds(ensemble_models=loaded_ensemble_models,
                                             data=np.array(last_days).reshape(1, 7, 1))
@@ -85,9 +85,9 @@ def predict(days, estimation):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Predict script with days and estimation value.')
+    parser = argparse.ArgumentParser(description='Predict script with days and confidence level.')
     parser.add_argument('-d', '--days', type=int, required=True, help='Number of days for prediction')
-    parser.add_argument('-c', '--confidence', type=float, required=True, help='Estimation value (between 0 and 1)')
+    parser.add_argument('-c', '--confidence', type=float, required=True, help='Confidence level (between 0 and 1)')
     
     args = parser.parse_args()
     
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     confidence_level = args.confidence
     
     if not (0 <= confidence_level <= 1):
-        print("Estimation value must be between 0 and 1.")
+        print("Confidence level must be between 0 and 1.")
         exit(1)
     
     predict(days, confidence_level)
