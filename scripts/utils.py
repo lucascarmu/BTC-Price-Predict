@@ -25,7 +25,7 @@ def get_binance_klines(symbol, interval, start_str, end_str=None, max_retries=3)
         }
         
         try:
-            response = requests.get(url, params=params)
+            response = request.get(url, params=params)
             if response.status_code == 451:
                 print(f"Error: {response.status_code}, {response.json()}")
                 break
@@ -40,7 +40,7 @@ def get_binance_klines(symbol, interval, start_str, end_str=None, max_retries=3)
             all_data.extend(data)
             start_time = data[-1][0] + 1  # Move to the next time window
             retries = 0  # Reset retries if the request was successful
-        except requests.exceptions.RequestException as e:
+        except request.exceptions.RequestException as e:
             print(f"Request error: {e}")
             retries += 1
             time.sleep(2 ** retries)  # Exponential backoff
