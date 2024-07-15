@@ -41,11 +41,17 @@ for i in range(num_iter):
                       optimizer=tf.keras.optimizers.Adam(),
                       metrics=["mae", "mse"])
 
+        # Repeat the dataset for sufficient steps per epoch
+        train_dataset_repeated = train_dataset.repeat()
+        test_dataset_repeated = test_dataset.repeat()
+        
         # Fit model
-        model.fit(train_dataset,
+        model.fit(train_dataset_repeated,
                   epochs=num_epochs,
+                  steps_per_epoch=1,
+                  validation_data=test_dataset_repeated,
+                  validation_steps=1,
                   verbose=0,
-                  validation_data=test_dataset,
                   callbacks=[tf.keras.callbacks.EarlyStopping(monitor="val_loss",
                                                               patience=200,
                                                               restore_best_weights=True),
