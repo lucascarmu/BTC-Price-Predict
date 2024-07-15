@@ -20,6 +20,12 @@ loss_fns = ["mae", "mse", "mape"]
 # Directory to save the models
 save_dir = './models/ensemble/'
 
+# Calculate total number of elements
+num_elements_train = sum(1 for _ in train_dataset.unbatch())
+
+# Calculate steps per epoch
+steps_per_epoch = num_elements_train // config.BATCH_SIZE
+
 # Create directory if it doesn't exist
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
@@ -48,9 +54,7 @@ for i in range(num_iter):
         # Fit model
         model.fit(train_dataset_repeated,
                   epochs=num_epochs,
-                  steps_per_epoch=1,
-                  validation_data=test_dataset_repeated,
-                  validation_steps=1,
+                  steps_per_epoch=steps_per_epoch,
                   verbose=0,
                   callbacks=[tf.keras.callbacks.EarlyStopping(monitor="val_loss",
                                                               patience=200,
