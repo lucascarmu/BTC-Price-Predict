@@ -40,10 +40,9 @@ test_labels_dataset = tf.data.Dataset.from_tensor_slices(y_test)
 train_dataset = tf.data.Dataset.zip((train_features_dataset, train_labels_dataset))
 test_dataset = tf.data.Dataset.zip((test_features_dataset, test_labels_dataset))
 
-# 3. Batch and prefetch for optimal performance
-train_dataset = train_dataset.batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+# 3. Repeat, batch, and prefetch for optimal performance
+train_dataset = train_dataset.repeat().batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 test_dataset = test_dataset.batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
-
 
 # Define file paths
 train_dataset_file = './data/train_dataset/'

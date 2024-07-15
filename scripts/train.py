@@ -46,13 +46,9 @@ for i in range(num_iter):
         model.compile(loss=loss_function,
                       optimizer=tf.keras.optimizers.Adam(),
                       metrics=["mae", "mse"])
-
-        # Repeat the dataset for sufficient steps per epoch
-        train_dataset_repeated = train_dataset.repeat()
-        test_dataset_repeated = test_dataset.repeat()
         
         # Fit model
-        model.fit(train_dataset_repeated,
+        model.fit(train_dataset,
                   epochs=num_epochs,
                   steps_per_epoch=steps_per_epoch,
                   verbose=0,
