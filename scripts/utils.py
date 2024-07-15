@@ -8,14 +8,14 @@ import numpy as np
 import tensorflow as tf
 
 
-
-def get_binance_klines(symbol, interval, start_str, end_str=None):
+def get_binance_klines(symbol, interval, start_str, end_str=None, max_retries=3):
     url = "https://api.binance.com/api/v3/klines"
     start_time = int(pd.Timestamp(start_str).timestamp() * 1000)
     end_time = int(pd.Timestamp(end_str).timestamp() * 1000) if end_str else None
     all_data = []
     
-    while start_time < end_time:
+    retries = 0
+    while start_time < end_time and retries < max_retries:
         params = {
             'symbol': symbol,
             'interval': interval,
@@ -24,15 +24,29 @@ def get_binance_klines(symbol, interval, start_str, end_str=None):
             'limit': 1000
         }
         
-        response = request.get(url, params=params)
-        data = response.json()
-        
-        if response.status_code != 200 or not data:
-            print(f"Error: {response.status_code}, {response.text}")
-            break
-        
-        all_data.extend(data)
-        start_time = data[-1][0] + 1  # Move to the next time window
+        try:
+            response = requests.get(url, params=params)
+            if response.status_code == 451:
+                print(f"Error: {response.status_code}, {response.json()}")
+                break
+            
+            data = response.json()
+            if response.status_code != 200 or not data:
+                print(f"Error: {response.status_code}, {response.text}")
+                retries += 1
+                time.sleep(2 ** retries)  # Exponential backoff
+                continue
+            
+            all_data.extend(data)
+            start_time = data[-1][0] + 1  # Move to the next time window
+            retries = 0  # Reset retries if the request was successful
+        except requests.exceptions.RequestException as e:
+            print(f"Request error: {e}")
+            retries += 1
+            time.sleep(2 ** retries)  # Exponential backoff
+    
+    if not all_data:
+        return None
     
     df = pd.DataFrame(all_data, columns=[
         'timestamp', 'open', 'high', 'low', 'close', 'volume', 'close_time',
