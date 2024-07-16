@@ -3,8 +3,6 @@ name: Update Data, Preprocess, and Train Model
 on:
   schedule:
     - cron: '0 1 * * *' # Run daily at 01:00 UTC
-  push:
-    branches: [ main ]
     
 jobs:
   update_preprocess_train:
