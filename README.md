@@ -23,39 +23,28 @@ The goal of this project is to build a model that can predict Bitcoin prices bas
    ```bash
    cd BTC-Price-Predict
    ```
-3. Install the required packages:
+3. Create and activate a virtual environment:
+   ```bash
+   conda create -n btc-prediction python=3.10.14
+   conda activate btc-prediction
+   ```
+5. Install the required packages:
    ```bash
    pip install -r requirements.txt
    ```
 
 ## Usage
 
-1. Download the dataset:
-   - Run the data download script to retrieve the latest Bitcoin price data:
-     ```bash
-     python download_data.py
-     ```
+Since the model is trained automatically every 24 hours, you only need to run the prediction script to get the latest Bitcoin price predictions.
 
-2. Preprocess the data:
-   - Ensure the downloaded data is saved in the `data/` directory.
-   - Run the preprocessing script:
-     ```bash
-     python preprocess.py
-     ```
-
-3. Train the model:
+1. Make predictions:
    ```bash
-   python train.py
+   python scripts/predict.py -d <days> -c <confidence_level>
    ```
 
-4. Make predictions:
+   For example, to predict the next 7 days with a confidence level of 95%:
    ```bash
-   python predict.py
-   ```
-
-5. Visualize the results:
-   ```bash
-   python visualize.py
+   python scripts/predict.py -d 7 -c 0.95
    ```
 
 ## Project Structure
