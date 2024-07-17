@@ -10,11 +10,10 @@ import config
 train_dataset = tf.data.Dataset.load('./data/train_dataset')
 test_dataset = tf.data.Dataset.load('./data/test_dataset')
 
-
 # Create an ensemble of models
 ensemble_models = []
 num_iter = 3
-num_epochs = 500
+num_epochs = 100  # Use a smaller number of epochs for fine-tuning
 loss_fns = ["mae", "mse", "mape"]
 
 # Directory to save the models
@@ -30,37 +29,44 @@ steps_per_epoch = num_elements_train // config.BATCH_SIZE
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 
-# Create num_iter number of models per loss function
+# Function to create a new model
+def create_model():
+    model = tf.keras.Sequential([
+        layers.Dense(128, kernel_initializer="he_normal", activation="relu"),
+        layers.Dense(128, kernel_initializer="he_normal", activation="relu"),
+        layers.Dense(config.HORIZON)
+    ])
+    return model
+
+# Create or load models for each loss function
 for i in range(num_iter):
     for loss_function in loss_fns:
-        print(f"Optimizing model by reducing: {loss_function} for {num_epochs} epochs, model number: {i}")
-
-        # Construct a simple model
-        model = tf.keras.Sequential([
-            layers.Dense(128, kernel_initializer="he_normal", activation="relu"),
-            layers.Dense(128, kernel_initializer="he_normal", activation="relu"),
-            layers.Dense(config.HORIZON)
-        ])
-
-        # Compile simple model with current loss function
-        model.compile(loss=loss_function,
-                      optimizer=tf.keras.optimizers.Adam(),
-                      metrics=["mae", "mse"])
+        model_save_path = os.path.join(save_dir, f'ensemble_model_{i}_{loss_function}.keras')
         
-        # Fit model
+        if os.path.exists(model_save_path):
+            print(f"Loading model from: {model_save_path}")
+            model = tf.keras.models.load_model(model_save_path)
+        else:
+            print(f"Creating new model: ensemble_model_{i}_{loss_function}")
+            model = create_model()
+            model.compile(loss=loss_function,
+                          optimizer=tf.keras.optimizers.Adam(),
+                          metrics=["mae", "mse"])
+        
+        # Fit (fine-tune) model
         model.fit(train_dataset.repeat(),
                   epochs=num_epochs,
                   steps_per_epoch=steps_per_epoch,
-                  verbose=0,
+                  verbose=1,
+                  validation_data=test_dataset,
                   callbacks=[tf.keras.callbacks.EarlyStopping(monitor="val_loss",
-                                                              patience=200,
+                                                              patience=50,
                                                               restore_best_weights=True),
                              tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss",
-                                                                  patience=100,
+                                                                  patience=25,
                                                                   verbose=1)])
-
+        
         # Save the fitted model
-        model_save_path = os.path.join(save_dir, f'ensemble_model_{i}_{loss_function}.keras')
         model.save(model_save_path)
         
         # Append fitted model to list of ensemble models
