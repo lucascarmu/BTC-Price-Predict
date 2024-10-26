@@ -1,4 +1,4 @@
-from utils import get_binance_klines
+from app.utils import get_binance_klines
 from datetime import datetime
 import os
 

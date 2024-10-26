@@ -1,14 +1,12 @@
 import shutil
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import pandas as pd
 import tensorflow as tf
-import config
+from app.config import settings
 
-HORIZON = config.HORIZON
-WINDOW_SIZE = config.WINDOW_SIZE
+HORIZON = settings.HORIZON
+WINDOW_SIZE = settings.WINDOW_SIZE
 
 
 df = pd.read_csv('./data/binance_btcusdt_price_history.csv')
@@ -41,8 +39,8 @@ train_dataset = tf.data.Dataset.zip((train_features_dataset, train_labels_datase
 test_dataset = tf.data.Dataset.zip((test_features_dataset, test_labels_dataset))
 
 # 3. Batch and prefetch for optimal performance
-train_dataset = train_dataset.batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
-test_dataset = test_dataset.batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+train_dataset = train_dataset.batch(settings.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+test_dataset = test_dataset.batch(settings.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
 
 # Define file paths

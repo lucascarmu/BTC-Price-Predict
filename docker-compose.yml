@@ -1,0 +1,9 @@
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./outputs:/app/outputs
+    ports:
+      - "8000:8000"

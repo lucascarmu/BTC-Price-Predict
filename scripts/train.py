@@ -1,10 +1,8 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import tensorflow as tf
 from tensorflow.keras import layers
-import config
+from app.config import settings
 
 # Load the datasets
 train_dataset = tf.data.Dataset.load('./data/train_dataset')
@@ -23,7 +21,7 @@ save_dir = './models/ensemble/'
 num_elements_train = sum(1 for _ in train_dataset.unbatch())
 
 # Calculate steps per epoch
-steps_per_epoch = num_elements_train // config.BATCH_SIZE
+steps_per_epoch = num_elements_train // settings.BATCH_SIZE
 
 # Create directory if it doesn't exist
 if not os.path.exists(save_dir):
@@ -34,7 +32,7 @@ def create_model():
     model = tf.keras.Sequential([
         layers.Dense(128, kernel_initializer="he_normal", activation="relu"),
         layers.Dense(128, kernel_initializer="he_normal", activation="relu"),
-        layers.Dense(config.HORIZON)
+        layers.Dense(settings.HORIZON)
     ])
     return model
 

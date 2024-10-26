@@ -8,12 +8,12 @@ from scipy.stats import norm # type: ignore
 import numpy as np # type: ignore
 import matplotlib.pyplot as plt # type: ignore
 import pandas as pd # type: ignore
-import config
+from app.config import settings
 from datetime import datetime
-from utils import make_ensemble_preds
+from app.utils import make_ensemble_preds
 
-HORIZON = config.HORIZON
-WINDOW_SIZE = config.WINDOW_SIZE
+HORIZON = settings.HORIZON
+WINDOW_SIZE = settings.WINDOW_SIZE
 
 
 def predict(days, confidence_level):

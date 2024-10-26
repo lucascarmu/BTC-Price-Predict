@@ -4,7 +4,7 @@ import numpy as np # type: ignore
 import matplotlib.pyplot as plt # type: ignore
 import pandas as pd # type: ignore
 from datetime import datetime
-from utils import evaluate_preds, make_ensemble_preds
+from app.utils import evaluate_preds, make_ensemble_preds
 
 # Create the output directory if it doesn't exist
 output_dir = './outputs/'
