@@ -1,60 +1,67 @@
 # Bitcoin Price Prediction using Time Series
 
-This project aims to predict the future value of Bitcoin using time series analysis. Leveraging various machine learning and deep learning techniques, we strive to forecast Bitcoin prices with high accuracy.
+Este proyecto busca predecir el valor futuro de Bitcoin utilizando análisis de series temporales. Empleando diversas técnicas de machine learning y deep learning, se intenta alcanzar una alta precisión en las predicciones de precios de Bitcoin.
 
-## Overview
+## Resumen
 
-The goal of this project is to build a model that can predict Bitcoin prices based on historical data. Time series forecasting is employed to analyze patterns and trends in the data, allowing for predictions of future values.
+El objetivo es construir un modelo que pueda predecir los precios de Bitcoin basándose en datos históricos. El proyecto utiliza forecasting de series temporales para identificar patrones y tendencias en los datos, lo que permite realizar predicciones de valores futuros.
 
-## Features
+## Instalación con Docker
 
-- Data download and preprocessing: Automated data retrieval, handling missing values, normalization, and feature engineering.
-- Model selection: Implementation of various time series forecasting models including ARIMA, LSTM, and Prophet.
-- Model evaluation: Assessing model performance using metrics such as Mean Absolute Error (MAE) and Root Mean Square Error (RMSE).
-- Visualization: Plotting historical and predicted prices for comparison.
+Para simplificar la implementación y garantizar la portabilidad, el proyecto está diseñado para ejecutarse en contenedores Docker. FastAPI actúa como el servidor principal que expone los endpoints para realizar predicciones y evaluaciones del modelo.
 
-## Installation
-
-1. Clone the repository:
+1. Clonar el repositorio:
    ```bash
    git clone https://github.com/lucascarmu/BTC-Price-Predict.git
-   ```
-2. Navigate to the project directory:
-   ```bash
    cd BTC-Price-Predict
    ```
-3. Create and activate a virtual environment:
+2. Ejecutar el proyecto con Docker Compose:
+   Para levantar los servicios de FastAPI y todos los componentes necesarios, utiliza:
    ```bash
-   conda create -n btc-prediction python=3.10.14
-   conda activate btc-prediction
+   docker-compose up --build
    ```
-5. Install the required packages:
+3. Endpoints de FastAPI:
+   * **/api/predict/** (POST): Realiza predicciones basadas en los días especificados y el nivel de confianza. El POST espera una solicitud con el formato de la clase PredictionRequest:
    ```bash
-   pip install -r requirements.txt
+   {
+      "days": 7,
+      "confidence_level": 0.95
+   }
    ```
+   La predicción resultante se almacena en un archivo ensemble_predictions.png en la carpeta outputs, que visualiza las predicciones realizadas junto con los intervalos de confianza.
+   * **/api/evaluate/** (GET): Evalúa el rendimiento actual del modelo y devuelve métricas clave de precisión.
 
-## Usage
+### Clase PredictionRequest
+La clase PredictionRequest define el formato del POST para el endpoint /api/predict/:
+```bash
+class PredictionRequest(BaseModel):
+    days: int = Field(..., description="Número de días a predecir", ge=1)
+    confidence_level: float = Field(1.0, description="Nivel de confianza para la predicción", ge=0, le=1)
 
-Since the model is trained automatically every 24 hours, you only need to run the prediction script to get the latest Bitcoin price predictions.
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "days": 7,
+                "confidence_level": 0.95
+            }
+        }
+    }
+```
 
-1. Make predictions:
-   ```bash
-   python scripts/predict.py -d <days> -c <confidence_level>
-   ```
+## Estructura del Proyecto
 
-   For example, to predict the next 7 days with a confidence level of 95%:
-   ```bash
-   python scripts/predict.py -d 7 -c 0.95
-   ```
-
-## Project Structure
-
-- `data/`: Directory for the dataset.
-- `notebooks/`: Jupyter notebooks for exploratory data analysis.
-- `scripts/`: Python scripts for downloading data, preprocessing, training, prediction, and visualization.
-- `models/`: Directory to save trained models.
-- `requirements.txt`: List of required packages.
-
+- `🐋 Dockerfile`               - Archivo de configuración Docker para la imagen del proyecto
+- `📂 app/`                     - Código de la aplicación FastAPI
+  - `📄 api/endpoints.py`       - Definición de endpoints
+  - `🔧 config.py`              - Configuración de la aplicación
+  - `📄 main.py`                - Punto de entrada de la aplicación
+  - `📄 utils.py`               - Funciones auxiliares
+- `📂 data/`                    - Directorio para el conjunto de datos
+- `🐋 docker-compose.yml`       - Archivo de configuración para Docker Compose
+- `📂 models/`                  - Directorio de modelos entrenados
+- `📂 outputs/`                 - Salida de las predicciones y gráficos generados
+- `📜 requirements.txt`         - Lista de paquetes requeridos
+- `📂 scripts/`                 - Scripts de descarga, preprocesamiento, entrenamiento y evaluación
 ---
 
-For any questions or inquiries, please contact lucascarmusciano@gmail.com.
+Para cualquier consulta, puedes contactar a: lucascarmusciano@gmail.com.
