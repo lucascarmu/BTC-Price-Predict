@@ -2,6 +2,8 @@ import sys
 import os
 import tensorflow as tf
 from tensorflow.keras import layers
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.config import settings
 
 # Load the datasets
@@ -10,8 +12,8 @@ test_dataset = tf.data.Dataset.load('./data/test_dataset')
 
 # Create an ensemble of models
 ensemble_models = []
-num_iter = 3
-num_epochs = 100  # Use a smaller number of epochs for fine-tuning
+num_iter = 6
+num_epochs = 100
 loss_fns = ["mae", "mse", "mape"]
 
 # Directory to save the models
@@ -41,17 +43,12 @@ for i in range(num_iter):
     for loss_function in loss_fns:
         model_save_path = os.path.join(save_dir, f'ensemble_model_{i}_{loss_function}.keras')
         
-        if os.path.exists(model_save_path):
-            print(f"Loading model from: {model_save_path}")
-            model = tf.keras.models.load_model(model_save_path)
-        else:
-            print(f"Creating new model: ensemble_model_{i}_{loss_function}")
-            model = create_model()
-            model.compile(loss=loss_function,
-                          optimizer=tf.keras.optimizers.Adam(),
-                          metrics=["mae", "mse"])
+        print(f"Creating new model: ensemble_model_{i}_{loss_function}")
+        model = create_model()
+        model.compile(loss=loss_function,
+                        optimizer=tf.keras.optimizers.Adam(),
+                        metrics=["mae", "mse"])
         
-        # Fit (fine-tune) model
         model.fit(train_dataset.repeat(),
                   epochs=num_epochs,
                   steps_per_epoch=steps_per_epoch,
